@@ -1,0 +1,134 @@
+Nume: Ureche
+Prenume: Andreea-Maria
+Grupa: 312CC
+============  Structuri De Date ~ TEMA 3 ==========
+
+In fisierul 'structs.h' am definit urmatoarele structuri:
+
+typedef struct Node  -> defineste structura unui nod din lista inlantuita 
+si contine urmatoarele informatii:
+    -char name ->numele obiectivului (destinatie)
+    -int vertex ->indexul obiectivului (destinatie)
+    -int weight -> distanta (greutatea muchiei)
+    -Node * next -> pointer catre urmatorul nod
+
+typedef struct Graph -> defineste structura unui graf reprezentat
+folosind liste de adiacenta.Cotine urmatoarele informatii:
+    -Node **adjList -> vector de liste inlantuite pentru a 
+    reprezenta lista de adiacenta al fiecarui varf
+    -int n -> numarul de varfuri
+    -int *visited -> vector ce retine daca un varf a fost sau nu
+    vizitat 
+
+typedef struct hash -> defineste o structura hash pentru 
+implementarea unui hashmap.Contine urmatoarele informatii:
+    -int hashed ->numarul de elemente 
+    -char **map -> matrice de caractere pentru a stoca cheile (numele obiectivelor)
+
+
+Voi explica pe scurt functiile folosite:
+Graph initGraph(Graph graph, int n)  ->functia initializeaza un graf 
+ cu n varfuri . Se aloca memorie pentru vectorul de liste si pentru
+ vectorul 'visited'  si se initializeaza cu '0' (nevizitat) fiecare element/varf.
+
+ int insertInMap(hash* map, char* key)  ->  functia primeste 2 paramterii:
+ un pointer la hashmap si un pointer la un sir de caractere ce urmeaza sa 
+ fie inserat in hashmap (numele obiectivului de pe harta).
+ Se itereaza folosind o bucla for prin cheile din hash map si se
+ compara fiecare intrare deja existenta cu intrarea transmisa 
+ functiei/cheia.Daca se gaseste o potrivire , se returneaza index-ul asociat.
+ In caz contrar,se adauga o noua intrare/cheie in hashmap si se incrementeaza 
+ numarul de hash-uri/elemente.La final functia returneaza indexul corespunzator cheii,
+ adica indexul care se va folosi pentru a indentifica numele obiectivului de pe harta .
+
+
+ void free_memory(Graph graph)-> functia elibereaza memoria ocupata 
+ de graf (prin eliberarea listelor de adiacenta si a vectorului de elemente 
+ vizitate).
+
+ void addEdge(Graph graph, int first_index, int second_index, int cost,
+             char* name)-> functia adauga o muchie in graf de la nodul sursa la 
+cel destinatie astfel: 
+ se aloca spatiu pentru un nod nou in lista pentru a reprezenta o muchie noua.
+ Se copiaza in campul 'name' numele destinatiei , in campul 'weight' costul muchiei/
+ greutatea , iar in 'vertex' index-ul asociat varfului destinatie (determinat folosind functia 
+ pentru hash) .Pointer-ul catre urmatorul nod va contine capul curent 
+ al listei de adiacenta corespunzatoare varfului sursa 'first_index'.
+ Vectorul cu listele de adiacenta a grafului este actualizat
+ prin atribuirea noului nod ca cap al listei de adiacenta pentru varful sursa 'first_index'.
+             
+ int cntZones(Graph graph) -> functia calculeaza numarul 
+ de componente conexe , adica numarul zonelor despartite de apa de pe harta.
+ Se parcurg nodurile grafului cu un contor , iar pentru fiecare varf ,
+ se verifica daca acesta a fost sau nu vizitat .
+ Daca varful nu a mai fost vizitat , se apeleaza functia 'dfs' ce realizeaza 
+ o parcurgere in adancime  pentru a explora varfurile din cadrul acelei zone.
+ Dupa apelul recursiv , se incrementeaza variabila ce retine numarul 
+ componetelor conexe .  Functia returneaza numarul componentelor conexe
+ (zonele despartite de apa).
+
+ void dfs(Graph graph, int vertex) -> Functia implementeaza o parcurgere in 
+ adancime a grafului reprezentat cu liste de adiacenta pornind de la un varf dat.
+ Functia primeste 2 parametri: graful si varful de la care incepe parcurgerea in 
+ adancime. Se marcheaza indexul corespunzator varfului ca fiind vizitat in vectorul 
+ 'visited' si se parcurge lista de adiacenta , apeland recursiv functia pentru fiecare 
+ varf care nu a mai fost vizitat . Functia se opreste atunci cand au fost vizitate toate 
+ varfurile accesibile incepand cu nodul de pornire .
+
+int PrimMst(Graph graph, int startVertex)-> functia implementeaza algoritmul lui 
+Prim pentru a gasi arborele minim de acoperire.
+Funcția primește două parametri: graful și varful de la care se incepe 
+construirea arborelui.
+Varful este marcat ca vizitat si se initializeaza o coada de prioritati
+pentru a selecta muchiile cu greutate minima. 
+Se aloca memorie pentru array-urile queueV si queueW care vor fi 
+utilizate pentru a stoca varfurile si greutatile corespunzatoare.
+Se adaugă in coada muchiile initiale de la varful de start catre vecinii sai .
+ Se itereaza prin lista de adiacenta a varfului de start si se adauga
+ varfurile și greutatile corespunzatoare in coada, si se dubleaza memoria alocata 
+ realocand vectorii , daca este nevoie .
+Apoi se construieste arborele minim de acoperire astfel:
+Se gaseste muchia cu greutatea minima din coada de prioritati. 
+Se cauta indexul acelei muchii în array-urile queueV și 
+queueW si se salvează indexul minim.
+Se elimina muchia cu greutatea minima din coada, actualizand dimensiunea cozii .
+Se verifica dacă varful curent al acelei muchii a fost deja vizitat .
+ Dacă varful nu a fost vizitat,se marchează varful ca vizitat ,
+ se adauga greutatea muchiei la totalWeight,pentru a actualiza greutatea totala a 
+ arborelui minim de acoperire.
+ Se adauga noi muchii din varful curent în coada de prioritati. 
+ Se iterează prin lista de adiacenta a varfului curent si se adauga
+ varfurile si greutatile corespunzatoare in coada.
+La final  se elibereaza memoria alocată pentru array-urile folosite
+iar functia returnează greutatea totala a arborelui minim de acoperire.
+
+void SumMst(Graph graph, FILE* fptr)-> functia calculeaza 
+costul total minim al drumurilor ce trebuie renovate pentru 
+fiecare zona despartita de apa apeland functia PrimMst cu varful de pornire 
+ca fiind varful care nu a fost vizitat ; salveaza aceste costuri 
+intr-un vector pe care il sorteaza crescator iar apoi afiseaza 
+costurile in ordine crescatoare in fisierul text.
+
+-Cerinta 1-
+  Pentru rezolvarea acestei cerinte , am inceput prin a 
+  deschide fisierele text pentu citire si scriere si a verifica
+  introducerea corecta a argumentelor in linia de comanda.
+  Apoi am citit din fisier numarul de obiective (nr de varfuri),
+  si numarul de drumuri bidirectionale (nr de muchii)  si am 
+  initializat graful neorientat apeland functia initGraph.
+  Am creat variabila de tip 'hash' si am alocat spatiu pentru matricea de caractere
+  ce va retine cheile (pentru cele n varfuri).
+  Apoi am citit cele m drumuri bidirectionale in acest format:
+  (sursa destinatie cost) , ce reprezinta muchia dintre doua varfuri
+  si distanta dintre cele doua / greutatea muchiei.
+  Pentru a crea o bijectie intre numele unui obiectiv(varf din graf)
+  si indexul ce reprezinta acest varf , m-am folosit de un hashmap 
+  pentru a putea o gasi o valoare pentru fiecare varf .
+  Astfel , am apelat functia 'insertInMap' pentru fiecare extremitate
+  a muchiei . Deoarece graful este neorientat , am adaugat o muchie atat de la
+  sursa -> destinatie cat si de la destinatie -> sursa ,apleand functia 'addEdge'.
+  Pentru a afla numarul de zone care sunt despartite de ape , am apelat
+  functia 'cntZones'.
+  Apoi am aflat costul total al drumurilor ce trebuie renovate pentru fiecare 
+  zona ce este despartita de ape , apeland functia 'SumMst' in cadrul careia  se apeleaza 
+  functia 'PrimMst' ce foloseste algoritimul lui Prim pentru aflarea arborelui minim de acoperire.
